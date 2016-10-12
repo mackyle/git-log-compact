@@ -1,0 +1,362 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title> git-log-compact &#x2013; log --oneline with who &amp; when</title>
+<style type="text/css">
+/* <![CDATA[ */
+body {
+  margin: 0;
+  padding: 2pt;
+  font-family: Times, "Times New Roman", serif;
+  counter-reset: hdr;
+}
+p {
+  margin: 1em 0;
+}
+div.content {
+  margin: 0 auto;
+  max-width: 100ex;
+}
+div.image {
+  margin: 1em auto;
+  text-align: center;
+}
+div.image a {
+  border: 0;
+  text-decoration: none;
+  color: inherit;
+}
+code {
+  font-size: 85%;
+  display: inline-block;
+  background-color: #e8e8e8;
+  padding: 0 2pt;
+}
+.bb {
+  font-weight: bold;  
+  color: #8080e0;
+  background-color: black;
+}
+.or {
+  font-weight: normal;
+  color: #cccc00;
+  background-color: black;
+}
+.gr {
+  font-weight: normal;
+  color: #00cc00;
+  background-color: black;
+}
+.rd {
+  font-weight: normal;
+  color: #cc0000;
+  background-color: black;
+}
+.tg {
+  font-weight: bold;
+  color: #e0e080;
+  background-color: black;
+}
+.wh {
+  font-weight: normal;
+  color: #cccccc;
+  background-color: black;
+}
+pre, code, .mono {
+  font-family: Menlo, Monaco, Consolas, Courier, "Courier New", monospace;
+}
+pre code {
+  margin: 0;
+  padding: 0;
+  background-color: inherit;
+  font-size: 90%;
+  display: inline;
+}
+h1, h2, h3, h4 {
+  margin-top: 2em;
+  margin-bottom: 1em;
+}
+h1, h2, h3, h4, ul {
+  font-family: Helvetica, Arial, FreeSans, sans-serif;
+  font-weight: normal;
+}
+ul {
+  font-size: 90%;
+  list-style-type: none;
+}
+ul > li:before {
+  content: "\2023  ";
+}
+ul.options {
+  list-style-type: none;
+}
+ul.options > li:before {
+  content: "";
+}
+ul.options li p {
+  font-size: 80%;
+  margin-left: 5ex;
+}
+ul.options li > p > code:first-child {
+  margin-left: -5ex;
+  font-size: 125%;
+}
+pre {
+  margin: 0 3ex;
+  padding: 1ex;
+  background-color: #e0e0e0;
+  zbackground-color: silver;
+}
+h1.title {
+  margin-top: 1em;
+  font-size: 200%;
+  text-align: center;
+}
+p.intro {
+  margin: 1em 8ex;
+  text-align: justify;
+  font-style: italic;
+}
+h1 {
+  font-size: 150%;
+}
+h2:before {
+ xcontent: "\2023  ";
+ content: counter(hdr, upper-roman) ". ";
+ counter-increment: hdr;
+}
+h2 {
+  font-size: 125%;
+}
+h3 {
+  font-size: 110%;
+}
+h4 {
+  font-size: 100%;
+}
+div.text {
+  /* margin-left: 1ex;
+  margin-right: 1ex; */
+}
+/* ]]> */
+</style>
+</head>
+<body bgcolor="#f8f8ff" text="black" link="red" vlink="maroon" alink="fuchsia">
+<div class="content">
+<h1 class="title">git-log-compact</h1>
+
+<p class="intro">A compact alternative to <code>git log --oneline</code> that
+includes dates, times and author and/or committer initials in a space efficient
+output format.  See all the <a href="examples.html" title="Examples">example
+images</a> together.</p>
+
+<div class="image"><a href="examples.html"><img src="git-log-compact.gif" title="git-log-compact example output"/></a></div>
+
+<h2>Overview</h2>
+
+<div class="text">
+<p>The <code>git-log-compact</code> script is intended to fill the gap between the
+<code>--oneline</code> log output format and the <code>--pretty=short</code>/<code>--pretty=medium</code>
+output formats.  It is not strictly a one line per commit output format
+(but almost) and while it only shows the title of each commit (like the
+<code>--pretty=short</code> format) it does include author and date information
+(like the <code>--pretty=medium</code> format) except that timestamps are shown
+very compactly and author/committer names are shown as initials.</p>
+
+<p>This allows one to get a complete view of repository activity in a very
+compact output format that can show many commits per screen full and is
+fully compatible with the <code>--graph</code> option.</p>
+
+<p>The <code>--notes</code>, <code>--pretty</code> and <code>--format</code> options are not allowed but any
+other <code>git log</code> options should work fine (especially <code>--graph</code>).</p>
+
+<p>In both <code>--graph</code> and non <code>--graph</code> modes:</p>
+
+<ul>
+<li>Root commits are identified by <code>_</code> on either side of the hash</li>
+</ul>
+
+<p>When <code>--graph</code> mode is enabled, the graph output is enhanced as follows:</p>
+
+<ul>
+<li>Breaks are inserted when necessary to avoid parent/child ambiguity</li>
+</ul>
+</div>
+
+<h2>Installation</h2>
+
+<div class="text">
+<p>Clone the repository from <code>https://github.com/mackyle/git-log-compact.git</code>
+or just grab the <a href="https://github.com/mackyle/git-log-compact/blob/HEAD/git-log-compact"
+title="git-log-compact executable file">git-log-compact file directly</a> (click the
+&#x201c;<span class="mono">Raw</span>&#x201d; link on that page).</p>
+
+<p>Put the <code>git-log-compact</code> executable file in one of the directories
+included in the <code>PATH</code> environment variable.</p>
+
+<p>Optionally set a global alias to save typing such as <code>lc</code> like so:</p>
+
+<pre><code>git config --global alias.lc log-compact
+</code></pre>
+
+<p>Optionally set global default options such as <code>--two-initials</code> and
+<code>--abbrev=8</code> like so:</p>
+
+<pre><code>git config --global log-compact.defaults "--two-initials --abbrev=8"
+</code></pre>
+</div>
+
+<h2>Dates &amp; Times</h2>
+
+<div class="text">
+<p>Dates and times are shown in the local timezone.  Set the TZ variable
+before running <code>git log-compact</code> (e.g. <code>TZ=UTC git log-compact</code> to show
+dates and times in UTC) or use the <code>--time-zone=</code> option (e.g.
+<code>git log-compact --time-zone=UTC</code>) to change that.</p>
+
+<p>Dates are shown on a date line all by themselves like so:</p>
+
+<pre class="bb"><code>=== 2015-11-13 ===
+</code></pre>
+
+<p>The date line indicates that the times on all the following lines
+(regardless of whether or not <code>--reverse</code> is being used) up until
+the next date line take place on the indicated date.  For example
+this output:</p>
+
+<pre class="bb"><code>=== 2015-09-28 ===
+<span class="or">be08dee9 </span><span class="gr">13:18 </span><span class="rd">jc </span><span class="or">(</span><span class="tg">tag: v2.6.0</span><span class="or">) </span><span class="wh">Git 2.6</span>
+=== 2015-09-21 ===
+<span class="or">8d530c4d </span><span class="gr">13:26 </span><span class="rd">jc </span><span class="or">(</span><span class="tg">tag: v2.6.0-rc3</span><span class="or">) </span><span class="wh">Git 2.6-rc3</span>
+<span class="or">904f6e7c </span><span class="gr">10:51 </span><span class="rd">bn </span><span class="wh">send-email: fix uninitialized var warning for $smtp_auth</span>
+=== 2015-09-20 ===
+<span class="or">18a21c19 </span><span class="gr">09:49 </span><span class="rd">ps </span><span class="wh">l10n: de.po: better language for one string</span>
+<span class="or">2e0f3663 </span><span class="gr">09:49 </span><span class="rd">rt </span><span class="wh">l10n: de.po: translate 2 messages</span>
+<span class="or">5fc31c1f </span><span class="gr">09:44 </span><span class="rd">tq </span><span class="wh">l10n: Update and review Vietnamese translation</span>
+</code></pre>
+
+<p>shows one commit on 2015-09-28, two commits on 2015-09-21 and three
+commits on 2015-09-20.</p>
+
+<p>Note that a date line may appear more than once for the same date
+(this is especially common when using <code>--graph</code> with its defualt
+<code>--topo-order</code>).</p>
+
+<p>The purpose of a date line is to indicate what date has been elided
+from the following lines, nothing more.</p>
+</div>
+
+<h2>Examples</h2>
+
+<div class="text">
+<p>See all the <a href="examples.html" title="Examples">example images</a> together.</p>
+<p>For example, running <code>git log-compact --decorate --graph -n 17 v2.6.1</code>
+on the Git repository produces this output (which will be colorized
+on the terminal if color is enabled):</p>
+
+<div class="image"><a href="examples.html"><img src="image1.gif" title="git-log-compact example output"/></a></div>
+
+<p>The output will be colorized according to the same settings used to enable/
+disable color for git log output.</p>
+
+<p>Additionally, the color of the three new items (dates, times and
+initials) can be controlled with the <code>color.log-compact.date</code>,
+<code>color.log-compact.time</code> and <code>color.log-compact.initials</code> config options.</p>
+
+<p>Running <code>git log-compact --graph --max-parents=0</code> on the Git repository gives:</p>
+
+<div class="image"><a href="examples.html"><img src="image3.gif" title="git-log-compact example output"/></a></div>
+
+<p>Notice the <code>_</code> on either side of the hash identifying those commits
+as root commits.  The <code>_</code> will only appear on the left side of the
+hash if the selected output format would have normally included a
+space there.  In <code>--graph</code> mode, all the spaces between the commit mark
+(e.g. <code>*</code>) and the hash are turned into <code>_</code>.</p>
+
+<p>Running <code>git log-compact --decorate --graph --no-merges -n 13 v2.6.1</code>
+on the Git repository results in this output:</p>
+
+<div class="image"><a href="examples.html"><img src="image2.gif" title="git-log-compact example output"/></a></div>
+
+<p>Notice how four linear breaks (<code>..........</code>) were automatically
+inserted to avoid parent child relationship confusion.</p>
+
+<p>In non <code>--graph</code> mode, linear breaks are NOT automatically inserted.
+They must be requested with the usual <code>--show-linear-break</code> option.</p>
+</div>
+
+<p>See <a href="examples.html" title="Examples">more example images</a>.</p>
+
+<h2>Options</h2>
+
+<div class="text">
+<p>In addition to allowing all the normal <code>git log</code> options except for
+<code>--notes</code>, <code>--format</code> and <code>--pretty</code> (<code>--oneline</code> is allowed and
+silently ignored), the following additional options may be utilized:</p>
+
+<ul class="options">
+<li><p><code>--seconds</code> <br />
+ include seconds in the time (i.e. HH:MM:SS instead of just HH:MM)</p></li>
+<li><p><code>--minutes</code> <br />
+ include minutes but not seconds in the time (i.e. HH:MM not HH:MM:SS) <br />
+ This is the default</p></li>
+<li><p><code>--no-times</code> <br />
+ omit the time field entirely</p></li>
+<li><p><code>--two-initials</code> <br />
+ only show at most two initials instead of the usual three <br />
+ This is the default if <code>--initials=author,committer</code> or
+ <code>--initials=committer,author</code> is used.</p></li>
+<li><p><code>--three-initials</code> <br />
+ show at most three initials <br />
+ This is the default unless <code>--initials=author,committer</code> or
+ <code>--initials=committer,author</code> is used.</p></li>
+<li><p><code>--no-initials</code> <br />
+ omit the initials field entirely</p></li>
+<li><p><code>--commit-message</code> <br />
+ when using <code>--walk-reflogs</code> show commit message not reflog message</p></li>
+<li><p><code>--author-date</code> <br />
+ force use of author dates and times <br />
+ The default is to use committer dates and times unless
+ <code>--author-date-order</code> is in effect.  This option forces author
+ dates and times to always be used and overrides <code>--committer-date</code>.</p></li>
+<li><p><code>--committer-date</code> <br />
+ force use of committer dates and times <br />
+ The default is to use committer dates and times if <code>--date-order</code> or
+ <code>--topo-order</code> is in effect or <code>--author-date-order</code> is NOT in effect.
+ This option forces committer dates and times to always be used and
+ overrides a previous <code>--author-date</code> option.</p></li>
+<li><p><code>--initials=author</code> <br />
+ show author initials <br />
+ This is the default behavior</p></li>
+<li><p><code>--initials=committer</code> <br />
+ show committer initials instead of author initials</p></li>
+<li><p><code>--initials=author,committer</code> <br />
+ show author and commiter initials separated by a <code>/</code> <br />
+ This changes the initials width default from three to two.</p></li>
+<li><p><code>--initials=committer,author</code> <br />
+ show commiter and author initials separated by a <code>/</code> <br />
+ This changes the initials width default from three to two.</p></li>
+<li><p><code>--time-zone=zone</code> <br />
+ set the TZ environment variable to <code>zone</code> <br />
+ This is an alterative to setting TZ before running <code>git log-compact</code>
+ and will affect the time zone dates and times are displayed in.</p></li>
+<li><p><code>--weekday</code> <br />
+ show the weekday with the date</p></li>
+<li><p><code>--no-weekday</code> <br />
+ do not show the weekday with the date <br />
+ This is the default behavior</p></li>
+</ul>
+
+<p>In addition to the above options, color output is controlled as normal
+for <code>git log</code> with the addition of <code>color.log-compact.date</code>,
+<code>color.log-compact.time</code> and <code>color.log-compact.initials</code> config options
+to alter the default colors for dates, times and initials respectively.</p>
+
+<p>Furthermore, default options may be set in the <code>log-compact.defaults</code>
+config value and they will be treated as though they appeared at
+the very beginning of the <code>git log-compact</code> command line option list
+(e.g. <code>git config log-compact.defaults "--abbrev=8 --seconds"</code>).</p>
+</div>
+
+</div>
+</body>
+</html>
