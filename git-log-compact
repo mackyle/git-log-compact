@@ -29,9 +29,9 @@ usage: git%slog-compact [<options>] [<revision-range>] [[--] <path>...]
     --committer-date      Use committer dates and times (default)
     --initials=author     Use author initials (default)
     --initials=committer  Use committer initials
-    --intiials=author,committer
+    --initials=author,committer
                           Use author/committer initials and --two-initials
-    --intiials=committer,author
+    --initials=committer,author
                           Use committer/author initials and --two-initials
     --time-zone=<zone>    Set TZ environment variable to <zone>
     --weekday             Show the weekday with the date
