@@ -75,7 +75,7 @@ shows one commit on 2015-09-28, two commits on 2015-09-21 and three
 commits on 2015-09-20.
 
 Note that a date line may appear more than once for the same date
-(this is especially common when using `--graph` with its defualt
+(this is especially common when using `--graph` with its default
 `--topo-order`).
 
 The purpose of a date line is to indicate what date has been elided
