@@ -1,11 +1,11 @@
 #!/usr/bin/env perl
 
 # git-log-compact.pl -- compact git log --oneline alternative with dates, times and initials
-# Copyright (C) 2015,2016 Kyle J. McKay <mackyle@gmail.com>.  All rights reserved.
+# Copyright (C) 2015,2016,2020 Kyle J. McKay <mackyle@gmail.com>.  All rights reserved.
 
 # License GPL v2
 
-# Version 1.0
+# Version 1.0.1
 
 use 5.008;
 use strict;
@@ -70,8 +70,9 @@ sub use_decorate {
 }
 
 my $iw;
-sub get_initials {
+sub get_initials($$) {
 	my $initials = shift;
+	my $width = shift;
 	my $wasutf8 = utf8::decode($initials);
 	$initials = lc($initials)." ";
 	$initials =~ s/[.]/ /g;
@@ -90,6 +91,8 @@ sub get_initials {
 	} else {
 		$initials =~ s/^(..).+(.)$/$1$2/;
 	}
+	$initials .= " " x ($width - length($initials))
+		if length($initials) < $width;
 	utf8::encode($initials) if $wasutf8;
 	return $initials;
 }
@@ -372,8 +375,8 @@ while (my $logline = <LOG>) {
 	}
 	my $isroot = !$parentlist;
 	my @parents = split(' ', $parentlist) if $usegraph;
-	my $initials = $iw ? get_initials($$ivar) : "";
-	my $initials2 = $iw2 ? get_initials($$ivar2) : "";
+	my $initials = $iw ? get_initials($$ivar, $iw) : "";
+	my $initials2 = $iw2 ? get_initials($$ivar2, $iw2) : "";
 	my ($newdate, $newday, $newtime) = split(" ", strftime("%Y-%m-%d %a $timeformat", localtime($timestamp)));
 	$newdate .= " " . $newday if $usewkday;
 	my $mightneedbreak = $lastwascommit && !$lastwasroot && $usegraph && !grep($_ eq $fullhash, @lastparents);
@@ -453,7 +456,7 @@ NOBREAKNEEDED:
 		$prefix = $fixmark . substr($prefix, 1)
 			if $prefix =~ /^[<>]/;
 	}
-	printf OUT "%s%s%s%s%s%-${iw}s%s%-${iw2}s%s%s\n", $prefix,
+	printf OUT "%s%s%s%s%s%s%s%s%s%s\n", $prefix,
 		"$hashcolor$hash$resetcolor",
 		$rootflag, ($timeformat ? "$timecolor$newtime$resetcolor " : ""),
 		$initialscolor, $initials, ($iw2 ? "/" : ""), $initials2,
